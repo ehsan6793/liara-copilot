@@ -1,25 +1,36 @@
+/*
+  پالت و استایل این فایل مستقیماً از خود سایت لیارا (liara.ir) استخراج شده:
+  - پس‌زمینهٔ تاریک #181818 + متن #eeeeee (دقیقاً رنگ‌های واقعی body سایت لیارا)
+  - گرادیان برند لیارا روی دکمه‌های اصلی: #87fcc4 -> #28c1f5 (دقیقاً همون گرادیانی
+    که روی دکمه‌ی «ورود یا ثبت‌نام» و لوگوی سایت لیارا استفاده شده)
+  - فونت یکان (Yekan) فونت اختصاصی/تجاری لیاراست و قابل embed نیست؛ Vazirmatn
+    به‌عنوان نزدیک‌ترین فونت فارسی آزاد و هم‌حس جایگزین شده.
+  - گوشه‌های ۸ تا ۲۰ پیکسل، دقیقاً مطابق دکمه‌های واقعی سایت.
+*/
 :root{
-  --bg:#0b1210; --panel:#121b18; --panel-2:#17221e; --line:#223029;
-  --ink:#eef5f1; --ink-2:#a9bcb3; --ink-3:#6f8379;
-  --green:#1fae72; --green-d:#0e7c56; --green-l:#0e2420;
+  --bg:#181818; --panel:#202020; --panel-2:#262626; --line:#333333;
+  --ink:#eeeeee; --ink-2:#b3b3b3; --ink-3:#808080;
+  --mint:#87fcc4; --cyan:#28c1f5;
+  --grad: linear-gradient(92deg, var(--mint) 0%, var(--cyan) 98.77%);
+  --grad-ink:#111111;
   --amber:#e0a62c; --amber-l:#2b2210;
   --red:#e2473a; --red-l:#2a1512;
-  --r-s:8px; --r-m:12px; --r-l:18px;
-  --shadow:0 2px 10px -4px rgba(0,0,0,.4);
+  --r-s:8px; --r-m:12px; --r-l:20px;
+  --shadow:0 2px 14px -4px rgba(0,0,0,.55);
 }
 *{box-sizing:border-box}
 html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family:Vazirmatn,system-ui,sans-serif;font-size:16px;line-height:1.6}
 #app{display:flex;flex-direction:column;height:100vh;max-width:760px;margin:0 auto}
 
-.top{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:linear-gradient(135deg,#123d2d,#0b1f17);border-bottom:1px solid var(--line);flex-shrink:0}
+.top{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:var(--bg);border-bottom:1px solid var(--line);flex-shrink:0}
 .brand{display:flex;align-items:center;gap:10px;font-size:18px}
-.brand-mark{width:26px;height:26px;border-radius:8px;background:var(--green);display:inline-block;position:relative}
-.brand-mark::after{content:"";position:absolute;inset:7px;border-radius:3px;background:#0b1f17}
+.brand-mark{width:28px;height:28px;border-radius:var(--r-s);background:var(--grad);display:inline-block;position:relative;box-shadow:0 0 16px -4px var(--cyan)}
+.brand-mark::after{content:"";position:absolute;inset:8px;border-radius:3px;background:var(--bg)}
 .app-pill{font-size:13px;color:var(--ink-2);background:var(--panel-2);border:1px solid var(--line);border-radius:999px;padding:4px 12px}
 
 #chat{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:12px}
 .msg{max-width:92%;padding:12px 14px;border-radius:var(--r-m);white-space:pre-wrap}
-.msg.user{align-self:flex-end;background:var(--green-d);color:#fff;border-bottom-left-radius:4px}
+.msg.user{align-self:flex-end;background:var(--grad);color:var(--grad-ink);font-weight:500;border-bottom-left-radius:4px}
 .msg.bot{align-self:flex-start;background:var(--panel);border:1px solid var(--line);border-bottom-right-radius:4px}
 
 .card{align-self:flex-start;max-width:96%;width:100%;background:var(--panel);border:1px solid var(--line);border-radius:var(--r-m);padding:12px 14px;box-shadow:var(--shadow)}
@@ -27,7 +38,7 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family
 .row{display:flex;justify-content:space-between;gap:8px;padding:6px 0;border-bottom:1px dashed var(--line);font-size:14px}
 .row:last-child{border-bottom:none}
 .tag{font-size:11px;padding:2px 8px;border-radius:999px;font-weight:600}
-.tag.ok{background:var(--green-l);color:var(--green)}
+.tag.ok{background:rgba(135,252,196,.14);color:var(--mint)}
 .tag.warn{background:var(--amber-l);color:var(--amber)}
 .tag.err{background:var(--red-l);color:var(--red)}
 
@@ -38,31 +49,36 @@ html,body{margin:0;height:100%;background:var(--bg);color:var(--ink);font-family
 
 .cause-item{padding:8px 0;border-bottom:1px dashed var(--line)}
 .cause-item:last-child{border-bottom:none}
-.cause-score{font-weight:700;color:var(--amber)}
+.cause-score{font-weight:700;color:var(--cyan)}
 
 .metric-bar{height:10px;border-radius:999px;background:var(--panel-2);overflow:hidden;margin-top:4px}
-.metric-bar > div{height:100%;background:var(--green)}
+.metric-bar > div{height:100%;background:var(--grad)}
 .metric-bar.high > div{background:var(--red)}
 
 #pendingBar{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 16px;background:var(--amber-l);border-top:1px solid var(--amber);flex-shrink:0;font-size:14px}
+#pendingBar[hidden]{display:none}
 #pendingBar span{color:var(--amber)}
 .pending-actions{display:flex;gap:8px;flex-shrink:0}
 
 #composer{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line);background:var(--panel);flex-shrink:0}
 #msgInput{flex:1;background:var(--panel-2);border:1px solid var(--line);border-radius:var(--r-s);padding:12px 14px;color:var(--ink);font-size:15px;font-family:inherit}
-#msgInput:focus{outline:2px solid var(--green);outline-offset:1px}
+#msgInput:focus{outline:2px solid var(--cyan);outline-offset:1px}
 
 .btn{border:none;border-radius:var(--r-s);padding:10px 16px;font-family:inherit;font-size:14px;font-weight:600;cursor:pointer}
-.btn-send{background:var(--green);color:#06140f}
-.btn-ok{background:var(--green);color:#06140f}
+.btn-send{background:var(--grad);color:var(--grad-ink)}
+.btn-ok{background:var(--grad);color:var(--grad-ink)}
 .btn-no{background:transparent;color:var(--ink-2);border:1px solid var(--line)}
 .btn:active{transform:scale(.96)}
 
 .quick{display:flex;gap:8px;padding:0 16px 14px;flex-wrap:wrap;flex-shrink:0}
 .quick button{background:var(--panel-2);border:1px solid var(--line);color:var(--ink-2);border-radius:999px;padding:7px 12px;font-size:13px;font-family:inherit;cursor:pointer}
-.quick button:active{background:var(--green-l);color:var(--green)}
+.quick button:active{background:rgba(135,252,196,.14);color:var(--mint)}
 
 @media(max-width:420px){
   html,body{font-size:15px}
   .msg,.card{max-width:98%}
+}
+
+@media(min-width:700px){
+  #app{border-inline:1px solid var(--line)}
 }
