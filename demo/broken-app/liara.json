@@ -1,0 +1,5 @@
+{
+  "platform": "docker",
+  "app": "demo-shop",
+  "port": 8000
+}

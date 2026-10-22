@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0e7c56">
+<title>همکار فنی لیارا</title>
+<link rel="stylesheet" href="/static/style.css?v=1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Vazirmatn:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<div id="app">
+  <header class="top">
+    <div class="brand"><span class="brand-mark"></span><b>همکار فنی لیارا</b></div>
+    <div class="app-pill" id="appPill">اپ انتخاب‌نشده</div>
+  </header>
+
+  <main id="chat"></main>
+
+  <div id="pendingBar" hidden>
+    <span id="pendingText"></span>
+    <div class="pending-actions">
+      <button id="btnApprove" class="btn btn-ok">تأیید و اجرا</button>
+      <button id="btnReject" class="btn btn-no">لغو</button>
+    </div>
+  </div>
+
+  <form id="composer">
+    <input id="msgInput" autocomplete="off" placeholder="مثلاً: چرا سایتم ارور می‌ده؟" />
+    <button type="submit" class="btn btn-send">ارسال</button>
+  </form>
+
+  <div class="quick">
+    <button data-q="لیست اپ‌هام چیه">لیست اپ‌ها</button>
+    <button data-q="وضعیت چطوره">وضعیت</button>
+    <button data-q="چرا ارور می‌ده">عیب‌یابی خطا</button>
+    <button data-q="منابع چطوره">متریک CPU/RAM</button>
+    <button data-q="لاگ‌ها رو نشون بده">لاگ‌ها</button>
+  </div>
+</div>
+<script src="/static/app.js?v=1"></script>
+</body>
+</html>

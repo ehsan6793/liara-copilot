@@ -1,0 +1,5 @@
+{
+  "platform": "docker",
+  "app": "liara-copilot",
+  "port": 8010
+}
