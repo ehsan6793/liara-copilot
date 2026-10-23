@@ -45,26 +45,26 @@ class Agent:
         message = message.strip()
         app = app_hint or self._extract_app_name(message) or self.last_app
 
-        try:
-            apps = self.tools["list_apps"].fn().data or []
-        except Exception:
-            apps = []
+        apps_result = self.tools["list_apps"].fn()
+        apps = (apps_result.data or []) if apps_result.ok else []
+        apps_error = apps_result.error if not apps_result.ok else None
         app_names = [a.get("project_id") for a in apps if a.get("project_id")]
 
-        if not app and app_names:
-            if len(app_names) == 1:
-                app = app_names[0]
-            elif self._wants_list(message):
-                return self._reply_app_list(apps)
+        if not app and app_names and len(app_names) == 1:
+            app = app_names[0]
 
         if app:
             self.last_app = app
 
         # ---- مسیرهای نیت (intent) ----
         if self._wants_list(message) and not self._wants_logs(message):
+            if apps_error:
+                return AgentResponse(f"نتونستم لیست اپ‌ها رو از لیارا بگیرم: {apps_error}")
             return self._reply_app_list(apps)
 
         if not app:
+            if apps_error:
+                return AgentResponse(f"نتونستم به حساب لیارا وصل بشم: {apps_error}")
             return AgentResponse(
                 "اول باید بدونم روی کدوم اپ کار کنیم. اسم اپ رو بگو، یا بپرس «لیست اپ‌هام چیه»."
             )

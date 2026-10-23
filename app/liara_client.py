@@ -18,6 +18,7 @@
 from __future__ import annotations
 
 import os
+import time
 from dataclasses import dataclass
 from typing import Any
 
@@ -39,6 +40,7 @@ class LiaraAPIError(Exception):
 @dataclass
 class LiaraClient:
     token: str
+    team_id: str = ""
     timeout: float = 20.0
 
     def _headers(self) -> dict[str, str]:
@@ -51,6 +53,12 @@ class LiaraClient:
         return {"Authorization": f"Bearer {self.token}", "Content-Type": "application/json"}
 
     def _request(self, method: str, url: str, **kwargs: Any) -> httpx.Response:
+        # لیارا خودِ CLI رسمی‌اش هم روی تمام درخواست‌ها یک query param به اسم
+        # teamID می‌فرسته (خالی یعنی حساب شخصی). بدون این، اپ‌های ساخته‌شده
+        # زیر یک تیم از دید این کلاینت دیده نمی‌شن.
+        params = dict(kwargs.pop("params", None) or {})
+        params.setdefault("teamID", self.team_id or "")
+        kwargs["params"] = params
         try:
             with httpx.Client(timeout=self.timeout) as client:
                 resp = client.request(method, url, headers=self._headers(), **kwargs)
@@ -103,11 +111,46 @@ class LiaraClient:
 
     # ---------- Observability ----------
     def get_logs(self, name: str, since: str = "30m") -> list[dict]:
+        # نکته‌ی مهمی که فقط از سورس واقعی CLI رسمی لیارا (@liara/cli) به‌دست اومد،
+        # نه از مستندات عمومی (که این جزئیات رو نداره):
+        #   - endpoint واقعی v2 هست، نه v1: /v2/projects/{app}/logs
+        #   - روی همون API_BASE (api.liara.ir) است، نه یک ساب‌دامین جدا برای لاگ
+        #   - پارامتر اسمش start هست نه since، و باید یک عدد (unix timestamp
+        #     به ثانیه) باشه، نه رشته‌ای مثل "30m" — دقیقاً همون چیزی که با خطای
+        #     واقعی «The since parameter must be a number» از خود API گرفتیم.
+        #   - فرمت پاسخ هم شبیه Loki است: {"data": [{"metaData": {...},
+        #     "values": [[timestamp_ns, "متن لاگ"], ...]}, ...]}
+        start_ts = int(time.time()) - self._parse_duration_seconds(since)
         resp = self._request(
-            "GET", f"{LOGS_BASE}/v1/projects/{name}/logs", params={"since": since}
+            "GET",
+            f"{API_BASE}/v2/projects/{name}/logs",
+            params={"start": start_ts, "direction": "forward", "last_lines": "false"},
         )
         data = self._safe_json(resp)
-        return data if isinstance(data, list) else data.get("logs", [])
+        groups = data.get("data", []) if isinstance(data, dict) else (data or [])
+        lines: list[dict] = []
+        for group in groups:
+            for value in group.get("values", []) or []:
+                try:
+                    ts_raw, text = value[0], value[1]
+                    ts = int(ts_raw) // 1_000_000_000  # نانوثانیه -> ثانیه
+                except Exception:
+                    ts, text = 0, str(value)
+                lines.append({"timestamp": ts, "message": text})
+        lines.sort(key=lambda entry: entry["timestamp"])
+        return lines
+
+    @staticmethod
+    def _parse_duration_seconds(since: str) -> int:
+        since = (since or "30m").strip()
+        if since.isdigit():
+            return int(since)
+        unit = since[-1]
+        try:
+            qty = int(since[:-1])
+        except ValueError:
+            return 1800
+        return qty * {"s": 1, "m": 60, "h": 3600, "d": 86400}.get(unit, 60)
 
     def get_events(self, name: str) -> list[dict]:
         resp = self._request("GET", f"{API_BASE}/v1/projects/{name}/events")
@@ -127,4 +170,5 @@ class LiaraClient:
 
 def client_from_env() -> LiaraClient:
     token = os.environ.get("LIARA_API_TOKEN", "")
-    return LiaraClient(token=token)
+    team_id = os.environ.get("LIARA_TEAM_ID", "")
+    return LiaraClient(token=token, team_id=team_id)
